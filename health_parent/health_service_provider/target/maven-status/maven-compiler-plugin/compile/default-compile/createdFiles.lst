@@ -1,0 +1,6 @@
+com\dumu\service\impl\CheckItemServiceImpl.class
+com\dumu\dao\CheckGroupDao.class
+com\dumu\service\impl\SetmealServiceImpl.class
+com\dumu\dao\CheckItemDao.class
+com\dumu\dao\SetmealDao.class
+com\dumu\service\impl\CheckGroupServiceImpl.class

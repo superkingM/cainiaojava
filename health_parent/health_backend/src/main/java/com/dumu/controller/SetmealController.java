@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import redis.clients.jedis.JedisPool;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -77,5 +78,43 @@ public class SetmealController {
                 queryPageBean.getQueryString()
         );
         return pageResult;
+    }
+
+    //根据ID查询
+    @RequestMapping("/findById")
+    public Result findById(Integer id) {
+        Setmeal setmeal = setmealService.findById(id);
+        if (setmeal != null) {
+            Result result = new Result(true, MessageConstant.QUERY_SETMEAL_SUCCESS);
+            result.setData(setmeal);
+            return result;
+        }
+
+        return new Result(false, MessageConstant.QUERY_SETMEAL_FAIL);
+    }
+
+    //根据ID查询相关联的检查组
+    @RequestMapping("/findCheckGroupIdsBySetmealId")
+    public Result findCheckGroupIdsBySetmealId(Integer id) {
+        try {
+            List<Integer> checkGroupIds = setmealService.findCheckGroupIdsBySetmealId(id);
+            return new Result(true, MessageConstant.QUERY_CHECKGROUP_SUCCESS, checkGroupIds);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false, MessageConstant.QUERY_CHECKGROUP_FAIL);
+        }
+
+    }
+
+    //编辑
+    @RequestMapping("/edit")
+    public Result edit(@RequestBody Setmeal setmeal, Integer[] checkGroupIds) {
+        setmealService.edit(setmeal, checkGroupIds);
+        try {
+
+        } catch (Exception $) {
+            return new Result(false, MessageConstant.EDIT_SETMEAL_FAIL);
+        }
+        return new Result(true, MessageConstant.EDIT_SETMEAL_SUCCESS);
     }
 }

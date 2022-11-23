@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import redis.clients.jedis.JedisPool;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,8 +30,8 @@ public class SetmealServiceImpl implements SetmealService {
     @Override
     public void add(Setmeal setmeal, Integer[] checkgroupIds) {
         setmealDao.add(setmeal);
-        if (checkgroupIds != null && checkgroupIds.length > 0){
-            setSetmealAndCheckgroup(setmeal.getId(),checkgroupIds);
+        if (checkgroupIds != null && checkgroupIds.length > 0) {
+            setSetmealAndCheckgroup(setmeal.getId(), checkgroupIds);
         }
         //将图片名称保存到Redis
         savePic2Redis(setmeal.getImg());
@@ -38,22 +39,40 @@ public class SetmealServiceImpl implements SetmealService {
 
     @Override
     public PageResult pageQuery(Integer currentPage, Integer pageSize, String queryString) {
-        PageHelper.startPage(currentPage,pageSize);
+        PageHelper.startPage(currentPage, pageSize);
         Page<Setmeal> page = setmealDao.selectByCondition(queryString);
-        return new PageResult(page.getTotal(),page.getResult());
+        return new PageResult(page.getTotal(), page.getResult());
+    }
+
+    @Override
+    public Setmeal findById(Integer id) {
+        return setmealDao.findById(id);
+    }
+
+    @Override
+    public List<Integer> findCheckGroupIdsBySetmealId(Integer id) {
+        return setmealDao.findCheckGroupIdsBySetmealId(id);
+    }
+
+    @Override
+    public void edit(Setmeal setmeal, Integer[] checkGroupIds) {
+        setmealDao.deleteAssociation(setmeal.getId());
+        setSetmealAndCheckgroup(setmeal.getId(), checkGroupIds);
+        setmealDao.edit(setmeal);
     }
 
     //将图片名称保存到Redis
-    private void savePic2Redis(String pic){
-        jedisPool.getResource().sadd(RedisConstant.SETMEAL_PIC_DB_RESOURCES,pic);
+    private void savePic2Redis(String pic) {
+        jedisPool.getResource().sadd(RedisConstant.SETMEAL_PIC_DB_RESOURCES, pic);
     }
+
     //设置套餐和检查组多对多关系，操作t_setmeal_checkgroup
-    public void setSetmealAndCheckgroup(Integer setmealId,Integer[] checkgroupIds){
-        if(checkgroupIds != null && checkgroupIds.length > 0){
+    public void setSetmealAndCheckgroup(Integer setmealId, Integer[] checkgroupIds) {
+        if (checkgroupIds != null && checkgroupIds.length > 0) {
             for (Integer checkgroupId : checkgroupIds) {
-                Map<String,Integer> map = new HashMap<>();
-                map.put("setmeal_id",setmealId);
-                map.put("checkgroup_id",checkgroupId);
+                Map<String, Integer> map = new HashMap<>();
+                map.put("setmeal_id", setmealId);
+                map.put("checkgroup_id", checkgroupId);
                 setmealDao.setSetmealAndCheckGroup(map);
             }
         }

@@ -17,10 +17,10 @@ import java.io.InputStream;
  * 七牛云工具类
  */
 public class QiniuUtils {
-//    public  static String accessKey = "dulF9Wze9bxujtuRvu3yyYb9JX1Sp23jzd3tO708";
-    public  static String accessKey = "4xC7-DRbBDdAWwiU6fIdup5yCCJAdqh85K1oHwkA";
-//    public  static String secretKey = "NtVp6afymr_EAXTnbuj3sm12WB4sD8bQLedPdh4w";
+    public  static String accessKey = "dulF9Wze9bxujtuRvu3yyYb9JX1Sp23jzd3tO708";
+
     public  static String secretKey = "NtVp6afymr_EAXTnbuj3sm12WB4sD8bQLedPdh4w";
+
     public  static String bucket = "s3sy";
 
     public static void upload2Qiniu(String filePath,String fileName){
